@@ -1,3 +1,64 @@
+<%@page import="java.sql.*" %>
+
+<% 
+        if(request.getParameter("submit") != null)
+        {
+            String pname  = request.getParameter("fullname");
+            String paddress = request.getParameter("address");
+            String pdate = request.getParameter("date");
+            String ptest = request.getParameter("test");
+            String ptech = request.getParameter("tech");
+            String pdocter = request.getParameter("doctor");
+            String pemail = request.getParameter("email");
+            
+            int bill = 0 ;
+            if(request.getParameter("test") == "Blood")
+            {
+                bill = 1000;
+            }
+            else if(request.getParameter("test") == "Urine")
+            {
+                bill = 2000;
+            }
+            else if(request.getParameter("test") == "ECG")
+            {
+                bill = 3000;
+            }
+            
+            
+            Connection con;
+            PreparedStatement pst;
+            ResultSet rs;
+            
+            Class.forName("com.mysql.jdbc.Driver");  
+            con=DriverManager.getConnection("jdbc:mysql://localhost:3306/lab_app?serverTimezone=UTC","root","");
+            
+            pst = con.prepareStatement("INSERT INTO `patients`( `pname`, `paddress`, `pappoinment`, `ptypetest`, `ptechnician`, `pdoctor`, `pbill`, `pemail`) VALUES (?,?,?,?,?,?,?,?)");
+            
+            String sbill = Integer.toString(bill);
+            
+            pst.setString(1,pname);
+            pst.setString(2, paddress);
+            pst.setString(3,pdate);
+            pst.setString(4,ptest);
+            pst.setString(5,ptech);
+            pst.setString(6,pdocter);
+            pst.setString(7, sbill);
+            pst.setString(8, pemail);
+            
+            pst.executeUpdate();  
+            
+            %>
+            <script>
+                alert("Record Added");
+            </script>
+            
+            <%
+            
+            
+        }
+%>
+
 <jsp:include page="../sub-main/header.jsp" />  
 <body>
   <!-- container section start -->
@@ -10,7 +71,7 @@
       </div>
 
       <!--logo start-->
-      <a href="index.jsp" class="logo">LAB <span class="lite">DISK</span></a>
+      <a href="../index.jsp" class="logo">LAB <span class="lite">DISK</span></a>
       <!--logo end-->
 
       
@@ -32,7 +93,7 @@
           </li>
           
           <li class="active">
-            <a class="" href="patient/patient-crud.jsp">
+            <a class="" href="patient-curd.jsp">
                           <i class="icon_document_alt"></i>
                           <span>Patient</span>
                       </a>
@@ -77,7 +138,7 @@
                 Add Records
               </header>
               <div class="panel-body">
-                <div class="form">
+                <div class="form" method="post">
                   <form class="form-validate form-horizontal" id="feedback_form" method="get" action="">
                     <div class="form-group ">
                       <label for="cname" class="control-label col-lg-2">Full Name <span class="required">*</span></label>
@@ -86,33 +147,70 @@
                       </div>
                     </div>
                     <div class="form-group ">
-                      <label for="cemail" class="control-label col-lg-2">E-Mail <span class="required">*</span></label>
+                      <label for="cname" class="control-label col-lg-2">Address <span class="required">*</span></label>
+                      <div class="col-lg-10">
+                        <input class="form-control" id="caddress" name="address" minlength="5" type="text" required />
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="cname" class="control-label col-lg-2">Appointment Date<span class="required">*</span></label>
+                      <div class="col-lg-10">
+                        <input class="form-control" id="caddress" name="date"  type="date" required />
+                      </div>
+                    </div>
+                      
+                    <div class="form-group ">
+                      <label for="cname" class="control-label col-lg-2">Test Type<span class="required">*</span></label>
+                      <div class="col-lg-10">
+                       <select name="test" class="form-control">
+                            <option selected disabled>Choose here</option>
+                              <option value="Blood"> Blood </option>
+                              <option value="Urine"> Urine </option>
+                              <option value="ECG"> ECG </option>
+                          </select>
+                      </div>
+                    </div>
+                      
+                      
+                     <div class="form-group ">
+                      <label for="cname" class="control-label col-lg-2">Technician<span class="required">*</span></label>
+                      <div class="col-lg-10">
+                       <select name="tech" class="form-control"> 
+                            <option selected disabled>Choose here</option>
+                              <option value="Raja"> Raja </option>
+                              <option value="Charu"> Charu </option>
+                              <option value="Nishan"> Nishan </option>
+                          </select>
+                      </div>
+                    </div>
+                      
+                      
+                     <div class="form-group ">
+                      <label for="cname" class="control-label col-lg-2">Doctor <span class="required">*</span></label>
+                      <div class="col-lg-10">
+                       <select name="doctor" class="form-control"> 
+                              <option selected disabled>Choose here</option>
+                              <option value="Mr.Karan"> Mr.Karan </option>
+                              <option value="Mrs.Nima"> Mrs.Nima </option>
+                              <option value="Mr.Muhilan"> Mr.Muhilan </option>
+                          </select>
+                      </div>
+                    </div>
+                      
+                      
+                    <div class="form-group ">
+                      <label for="email" class="control-label col-lg-2">E-Mail <span class="required">*</span></label>
                       <div class="col-lg-10">
                         <input class="form-control " id="cemail" type="email" name="email" required />
                       </div>
                     </div>
-                    <div class="form-group ">
-                      <label for="curl" class="control-label col-lg-2">Website</label>
-                      <div class="col-lg-10">
-                        <input class="form-control " id="curl" type="url" name="url" />
-                      </div>
-                    </div>
-                    <div class="form-group ">
-                      <label for="cname" class="control-label col-lg-2">Subject <span class="required">*</span></label>
-                      <div class="col-lg-10">
-                        <input class="form-control" id="subject" name="subject" minlength="5" type="text" required />
-                      </div>
-                    </div>
-                    <div class="form-group ">
-                      <label for="ccomment" class="control-label col-lg-2">Feedback</label>
-                      <div class="col-lg-10">
-                        <textarea class="form-control " id="ccomment" name="comment" required></textarea>
-                      </div>
-                    </div>
+                    
+       
+                    
                     <div class="form-group">
                       <div class="col-lg-offset-2 col-lg-10">
-                        <button class="btn btn-primary" type="submit">Save</button>
-                        <button class="btn btn-default" type="button">Cancel</button>
+                        <input class="btn btn-primary"  name="submit" type="submit" value="Save">
+                        <input class="btn btn-default" type="button" value="Cancel">
                       </div>
                     </div>
                   </form>
@@ -131,11 +229,11 @@
               <table class="table table-striped table-advance table-hover">
                 <tbody>
                   <tr>
-                    <th><i class="icon_profile"></i> Full Name</th>
-                    <th><i class="icon_calendar"></i> Date</th>
-                    <th><i class="icon_mail_alt"></i> Email</th>
-                    <th><i class="icon_pin_alt"></i> City</th>
-                    <th><i class="icon_mobile"></i> Mobile</th>
+                    <th><i class="icon_profile"></i> Patient ID</th>
+                    <th><i class="icon_calendar"></i> Name</th>
+                    <th><i class="icon_mail_alt"></i> Appointment </th>
+                    <th><i class="icon_pin_alt"></i> Technician</th>
+                    <th><i class="icon_mobile"></i> Amount</th>
                     <th><i class="icon_cogs"></i> Action</th>
                   </tr>
                   <tr>
