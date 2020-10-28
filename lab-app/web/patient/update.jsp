@@ -2,7 +2,8 @@
 
 <% 
         if(request.getParameter("submit") != null)
-        {
+        {   
+            String pid  = request.getParameter("id");
             String pname  = request.getParameter("fullname");
             String paddress = request.getParameter("address");
             String pdate = request.getParameter("date");
@@ -34,7 +35,7 @@
             Class.forName("com.mysql.jdbc.Driver");  
             con=DriverManager.getConnection("jdbc:mysql://localhost:3306/lab_app?serverTimezone=UTC","root","");
             
-            pst = con.prepareStatement("INSERT INTO `patients`( `pname`, `paddress`, `pappoinment`, `ptypetest`, `ptechnician`, `pdoctor`, `pbill`, `pemail`) VALUES (?,?,?,?,?,?,?,?)");
+            pst = con.prepareStatement("UPDATE `patients` SET `pname`=?,`paddress`=?,`pappoinment`=?,`ptypetest`=?,`ptechnician`=?,`pdoctor`=?,`pbill`=?,`pemail`=? WHERE `pid` = ? ");
             
             String sbill = Integer.toString(bill);
             
@@ -46,16 +47,19 @@
             pst.setString(6,pdocter);
             pst.setString(7, sbill);
             pst.setString(8, pemail);
+            pst.setString(9, pid);
             
             pst.executeUpdate();  
             
             %>
             <script>
-                alert("Record Added");
+                alert("Record Updated");
             </script>
             
             <%
             
+               String redirectURL = "patient-curd.jsp";
+               response.sendRedirect(redirectURL);
             
         }
 %>
@@ -131,12 +135,39 @@
           </div>
         </div>
         </div>
+        
+        
+        <%
+            Connection con;
+            PreparedStatement pst;
+            ResultSet rs;
+            
+            Class.forName("com.mysql.jdbc.Driver");  
+            con=DriverManager.getConnection("jdbc:mysql://localhost:3306/lab_app?serverTimezone=UTC","root","");
+            
+            String id  = request.getParameter("id");
+            
+            pst = con.prepareStatement("Select * from patients where pid = ?" );
+            pst.setString(1, id);
+            
+
+            rs  = pst.executeQuery();
+            
+            while( rs.next())
+            {
+               
+            
+          
+
+         %>
+            
+           
         <div class="row">
             
-          <div class="col-lg-4">
+          <div class="col-lg-12">
             <section class="panel">
               <header class="panel-heading">
-                Add Records
+                Update Records
               </header>
               <div class="panel-body">
                 <div class="form" >
@@ -144,19 +175,19 @@
                     <div class="form-group ">
                       <label for="cname" class="control-label col-lg-2">Full Name <span class="required">*</span></label>
                       <div class="col-lg-10">
-                        <input class="form-control" id="cname" name="fullname" minlength="5" type="text" required />
+                        <input class="form-control"  value ="<%=rs.getString("pname") %>"id="cname" name="fullname" minlength="5" type="text" required />
                       </div>
                     </div>
                     <div class="form-group ">
                       <label for="cname" class="control-label col-lg-2">Address <span class="required">*</span></label>
                       <div class="col-lg-10">
-                        <input class="form-control" id="caddress" name="address" minlength="5" type="text" required />
+                        <input class="form-control"  value ="<%=rs.getString("paddress") %>" id="caddress" name="address" minlength="5" type="text" required />
                       </div>
                     </div>
                     <div class="form-group ">
                       <label for="cname" class="control-label col-lg-2">Appointment Date<span class="required">*</span></label>
                       <div class="col-lg-10">
-                        <input class="form-control" id="caddress" name="date"  type="date" required />
+                        <input class="form-control" value ="<%=rs.getString("pappoinment") %>" id="caddress" name="date"  type="date" required />
                       </div>
                     </div>
                       
@@ -164,7 +195,7 @@
                       <label for="cname" class="control-label col-lg-2">Test Type<span class="required">*</span></label>
                       <div class="col-lg-10">
                        <select name="test" class="form-control">
-                            <option selected disabled>Choose here</option>
+                            <option value="<%=rs.getString("ptypetest") %>"><%=rs.getString("ptypetest") %></option>
                               <option value="Blood"> Blood </option>
                               <option value="Urine"> Urine </option>
                               <option value="ECG"> ECG </option>
@@ -177,7 +208,7 @@
                       <label for="cname" class="control-label col-lg-2">Technician<span class="required">*</span></label>
                       <div class="col-lg-10">
                        <select name="tech" class="form-control"> 
-                            <option selected disabled>Choose here</option>
+                            <option value="<%=rs.getString("ptechnician") %>"><%=rs.getString("ptechnician") %></option>
                               <option value="Raja"> Raja </option>
                               <option value="Charu"> Charu </option>
                               <option value="Nishan"> Nishan </option>
@@ -190,7 +221,7 @@
                       <label for="cname" class="control-label col-lg-2">Doctor <span class="required">*</span></label>
                       <div class="col-lg-10">
                        <select name="doctor" class="form-control"> 
-                              <option selected disabled>Choose here</option>
+                              <option value="<%=rs.getString("pdoctor") %>"><%=rs.getString("pdoctor") %></option>
                               <option value="Mr.Karan"> Mr.Karan </option>
                               <option value="Mrs.Nima"> Mrs.Nima </option>
                               <option value="Mr.Muhilan"> Mr.Muhilan </option>
@@ -202,7 +233,7 @@
                     <div class="form-group ">
                       <label for="email" class="control-label col-lg-2">E-Mail <span class="required">*</span></label>
                       <div class="col-lg-10">
-                        <input class="form-control " id="cemail" type="email" name="email" required />
+                        <input class="form-control " value="<%=rs.getString("pemail") %>" id="cemail" type="email" name="email" required />
                       </div>
                     </div>
                     
@@ -210,73 +241,23 @@
                     
                     <div class="form-group">
                       <div class="col-lg-offset-2 col-lg-10">
-                        <input class="btn btn-primary"  name="submit" type="submit" value="Save">
-                        <input class="btn btn-default" type="button" value="Cancel">
+                        <input class="btn btn-primary"  name="submit" type="submit" value="Update">
+                       
                       </div>
                     </div>
                   </form>
-                </div>
-
+                </div>  
+                      
+                      
+                      
+                        <%
+                            }
+                        %>
               </div>
             </section>
           </div>
             
-           <div class="col-lg-8">
-            <section class="panel">
-              <header class="panel-heading">
-                ALL Details 
-              </header>
-
-              <table class="table table-striped table-advance table-hover">
-                <tbody>
-                  <tr>
-                    <th> Patient ID</th>
-                    <th> Name</th>
-                    <th>Appointment </th>
-                    <th>Technician</th>
-                    <th>Amount</th>
-                    <th><i class="icon_cogs"></i> Action</th>
-                  </tr>
-                   <%
-                      
-                    Connection con;
-                    PreparedStatement pst;
-                    ResultSet rs;
-
-                    Class.forName("com.mysql.jdbc.Driver");  
-                    con=DriverManager.getConnection("jdbc:mysql://localhost:3306/lab_app?serverTimezone=UTC","root","");
-                      
-                    String Query = "Select * from patients";
-                    Statement st = con.createStatement();
-                    
-                    rs = st.executeQuery(Query);
-                    
-                    while(rs.next())
-                    {
-                            String id = rs.getString("pid");
-                  %>
-                  <tr>
-                  <td> <%=rs.getString("pid") %></td>
-                    <td><%=rs.getString("pname") %></td>
-                    <td><%=rs.getString("pappoinment") %></td>
-                    <td><%=rs.getString("ptechnician") %></td>
-                    <td><%=rs.getString("pbill") %></td>
-                    <td>
-                      <div class="btn-group">
-                          <a class="btn btn-primary" href="update.jsp?id=<%=id %>"><i class="icon_pencil-edit_alt"></i></a>
-                        <a class="btn btn-success" href="view.jsp?id=<%=id %>"><i class="arrow_expand_alt3"></i></a>
-                        <a class="btn btn-danger" href="delete.jsp?id=<%=id %>"><i class="icon_close_alt2"></i></a>
-                      </div>
-                    </td>
-                  </tr>
-                  
-                  <%
-                      }
-                  %>
-                </tbody>
-              </table>
-            </section>
-          </div>
+          
         </div>
         <!-- project team & activity end -->
 
