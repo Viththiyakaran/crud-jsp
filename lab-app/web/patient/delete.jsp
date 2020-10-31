@@ -1,17 +1,31 @@
-<%-- 
-    Document   : delete
-    Created on : Oct 28, 2020, 10:35:27 AM
-    Author     : Project Manager
---%>
+<%@page import="java.sql.*" %>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
-    </head>
-    <body>
-        <h1>Hello World!</h1>
-    </body>
-</html>
+<% 
+        if(request.getParameter("id") != null)
+        {
+            String pid  = request.getParameter("id");
+            
+            Connection con;
+            PreparedStatement pst;
+            ResultSet rs;
+            
+            Class.forName("com.mysql.jdbc.Driver");  
+            con=DriverManager.getConnection("jdbc:mysql://localhost:3306/lab_app?serverTimezone=UTC","root","");
+            
+            pst = con.prepareStatement("delete from patients where pid = ?");
+            pst.setString(1, pid);
+            
+            pst.executeUpdate();  
+            
+            %>
+            <script>
+                alert("Records Deleted");
+            </script>
+            
+            <%
+            
+               String redirectURL = "patient-curd.jsp";
+               response.sendRedirect(redirectURL);
+            
+        }
+%>
