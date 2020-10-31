@@ -1,3 +1,14 @@
+<%@page import="java.sql.*" %>
+
+<%
+    Connection con;
+            PreparedStatement pst;
+            ResultSet rs;
+            
+            Class.forName("com.mysql.jdbc.Driver");  
+            con=DriverManager.getConnection("jdbc:mysql://localhost:3306/lab_app?serverTimezone=UTC","root","");
+%>
+
 <jsp:include page="../sub-main/header.jsp" />  
 
 
