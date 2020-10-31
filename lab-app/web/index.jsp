@@ -1,3 +1,13 @@
+
+<%
+  if( session.getAttribute("username") == null)
+  {
+               String redirectURL = "login/index.jsp";
+               response.sendRedirect(redirectURL);
+  }
+
+%> 
+
 <%@page import="java.sql.*" %>
 
 <%
@@ -71,7 +81,7 @@
           
          
           <li>
-            <a class="" href="logout.jsp">
+            <a class="" href="login/logout.jsp">
                          <i class="icon_key_alt"></i> 
                           <span>Logout</span>
                       </a>
@@ -92,7 +102,7 @@
           <div class="col-lg-12">
             <h3 class="page-header"><i class="fa fa-laptop"></i> Dashboard</h3>
             <ol class="breadcrumb">
-              <li><i class="fa fa-home"></i><a href="index.html">Home</a></li>
+              <li><i class="fa fa-home"></i><a href="index.jsp">Home</a></li>
               <li><i class="fa fa-laptop"></i>Dashboard</li>
             </ol>
           </div>
@@ -259,13 +269,7 @@
       </section>
       <div class="text-right">
         <div class="credits">
-          <!--
-            All the links in the footer should remain intact.
-            You can delete the links only if you purchased the pro version.
-            Licensing information: https://bootstrapmade.com/license/
-            Purchase the pro version form: https://bootstrapmade.com/buy/?theme=NiceAdmin
-          -->
-          Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+          Designed by <a href="#">Prashath</a>
         </div>
       </div>
     </section>
